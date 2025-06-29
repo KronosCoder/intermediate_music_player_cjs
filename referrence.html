@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parallax Star Effect</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+            background: linear-gradient(180deg, #0a0a23 0%, #1a1a3a 50%, #2d1b69 100%);
+            height: 100vh;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .star-layer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s infinite alternate;
+        }
+
+        .star.small {
+            width: 1px;
+            height: 1px;
+        }
+
+        .star.medium {
+            width: 2px;
+            height: 2px;
+            box-shadow: 0 0 3px rgba(255, 255, 255, 0.8);
+        }
+
+        .star.large {
+            width: 3px;
+            height: 3px;
+            box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
+        }
+
+        .star.bright {
+            width: 4px;
+            height: 4px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 1);
+            animation: pulse 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { 
+                opacity: 0.8;
+                transform: scale(1);
+            }
+            50% { 
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+
+        .navbar {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            padding: 15px 25px;
+            display: flex;
+            gap: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-item {
+            position: relative;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .nav-item:hover {
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .nav-item.active {
+            color: white;
+        }
+
+        .nav-indicator {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            border-radius: 2px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(255, 107, 107, 0.5);
+        }
+
+        .content {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            min-height: 100vh;
+            color: white;
+            padding: 120px 20px 20px;
+        }
+
+        .songs-container {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .song-item {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .song-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .song-cover {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .song-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .song-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            margin: 0;
+        }
+
+        .song-artist {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            margin: 0;
+        }
+
+        .song-duration {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-left: auto;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeInUp 2s ease-out forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .shooting-star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1), 0 0 0 8px rgba(255, 255, 255, 0.1), 0 0 20px rgba(255, 255, 255, 1);
+            animation: shootingStar 3s ease-out infinite;
+        }
+
+        .shooting-star::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 0;
+            width: 300px;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.8) 100%);
+            transform: translateY(-50%);
+        }
+
+        @keyframes shootingStar {
+            0% {
+                transform: rotate(-45deg) translateX(0);
+                opacity: 1;
+            }
+            70% {
+                opacity: 1;
+            }
+            100% {
+                transform: rotate(-45deg) translateX(-500px);
+                opacity: 0;
+            }
+        }
+
+        .mouse-follower {
+            position: fixed;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            transition: transform 0.1s ease-out;
+            z-index: 5;
+        }
+    </style>
+</head>
+<body>
+    <div class="mouse-follower"></div>
+    
+    <div class="stars-container">
+        <div class="star-layer" id="layer1"></div>
+        <div class="star-layer" id="layer2"></div>
+        <div class="star-layer" id="layer3"></div>
+        <div class="star-layer" id="layer4"></div>
+    </div>
+
+    <nav class="navbar">
+        <a href="#" class="nav-item active" data-page="official">Official Songs</a>
+        <a href="#" class="nav-item" data-page="my">My Songs</a>
+        <a href="#" class="nav-item" data-page="playlist">Play List</a>
+        <a href="#" class="nav-item" data-page="settings">Settings</a>
+        <div class="nav-indicator"></div>
+    </nav>
+
+    <div class="content">
+        <h1 class="page-title" id="pageTitle">Official Songs</h1>
+        
+        <div class="songs-container" id="songsContainer">
+            <div class="song-item">
+                <div class="song-cover">🎵</div>
+                <div class="song-info">
+                    <h3 class="song-title">Blinding Lights</h3>
+                    <p class="song-artist">The Weeknd</p>
+                </div>
+                <span class="song-duration">3:20</span>
+            </div>
+            
+            <div class="song-item">
+                <div class="song-cover">🎶</div>
+                <div class="song-info">
+                    <h3 class="song-title">Watermelon Sugar</h3>
+                    <p class="song-artist">Harry Styles</p>
+                </div>
+                <span class="song-duration">2:54</span>
+            </div>
+            
+            <div class="song-item">
+                <div class="song-cover">🎤</div>
+                <div class="song-info">
+                    <h3 class="song-title">Levitating</h3>
+                    <p class="song-artist">Dua Lipa</p>
+                </div>
+                <span class="song-duration">3:23</span>
+            </div>
+            
+            <div class="song-item">
+                <div class="song-cover">🎸</div>
+                <div class="song-info">
+                    <h3 class="song-title">Good 4 U</h3>
+                    <p class="song-artist">Olivia Rodrigo</p>
+                </div>
+                <span class="song-duration">2:58</span>
+            </div>
+            
+            <div class="song-item">
+                <div class="song-cover">🎹</div>
+                <div class="song-info">
+                    <h3 class="song-title">Stay</h3>
+                    <p class="song-artist">The Kid LAROI, Justin Bieber</p>
+                </div>
+                <span class="song-duration">2:21</span>
+            </div>
+            
+            <div class="song-item">
+                <div class="song-cover">🎺</div>
+                <div class="song-info">
+                    <h3 class="song-title">Heat Waves</h3>
+                    <p class="song-artist">Glass Animals</p>
+                </div>
+                <span class="song-duration">3:58</span>
+            </div>
+            
+            <div class="song-item">
+                <div class="song-cover">🥁</div>
+                <div class="song-info">
+                    <h3 class="song-title">As It Was</h3>
+                    <p class="song-artist">Harry Styles</p>
+                </div>
+                <span class="song-duration">2:47</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class ParallaxStars {
+            constructor() {
+                this.layers = [
+                    { element: document.getElementById('layer1'), speed: 0.2, starCount: 100, type: 'small' },
+                    { element: document.getElementById('layer2'), speed: 0.5, starCount: 75, type: 'medium' },
+                    { element: document.getElementById('layer3'), speed: 0.8, starCount: 50, type: 'large' },
+                    { element: document.getElementById('layer4'), speed: 1.2, starCount: 25, type: 'bright' }
+                ];
+                
+                this.mouseX = 0;
+                this.mouseY = 0;
+                this.mouseFollower = document.querySelector('.mouse-follower');
+                
+                this.init();
+            }
+
+            init() {
+                this.createStars();
+                this.bindEvents();
+                this.createShootingStars();
+                this.initNavigation();
+            }
+
+            initNavigation() {
+                const navItems = document.querySelectorAll('.nav-item');
+                const indicator = document.querySelector('.nav-indicator');
+                const pageTitle = document.getElementById('pageTitle');
+                const songsContainer = document.getElementById('songsContainer');
+                
+                // Set initial indicator position
+                this.updateIndicator(document.querySelector('.nav-item.active'), indicator);
+                
+                const songData = {
+                    official: {
+                        title: 'Official Songs',
+                        songs: [
+                            { title: 'Blinding Lights', artist: 'The Weeknd', duration: '3:20', emoji: '🎵' },
+                            { title: 'Watermelon Sugar', artist: 'Harry Styles', duration: '2:54', emoji: '🎶' },
+                            { title: 'Levitating', artist: 'Dua Lipa', duration: '3:23', emoji: '🎤' },
+                            { title: 'Good 4 U', artist: 'Olivia Rodrigo', duration: '2:58', emoji: '🎸' },
+                            { title: 'Stay', artist: 'The Kid LAROI, Justin Bieber', duration: '2:21', emoji: '🎹' },
+                            { title: 'Heat Waves', artist: 'Glass Animals', duration: '3:58', emoji: '🎺' },
+                            { title: 'As It Was', artist: 'Harry Styles', duration: '2:47', emoji: '🥁' }
+                        ]
+                    },
+                    my: {
+                        title: 'My Songs',
+                        songs: [
+                            { title: 'My Favorite Song', artist: 'Local Artist', duration: '4:12', emoji: '❤️' },
+                            { title: 'Custom Mix', artist: 'DJ Me', duration: '3:45', emoji: '🎚️' },
+                            { title: 'Guitar Practice', artist: 'Me', duration: '2:30', emoji: '🎸' },
+                            { title: 'Voice Memo', artist: 'Personal', duration: '1:45', emoji: '🎙️' }
+                        ]
+                    },
+                    playlist: {
+                        title: 'Play Lists',
+                        songs: [
+                            { title: 'Chill Vibes', artist: 'Playlist • 25 songs', duration: '1:32:15', emoji: '🌊' },
+                            { title: 'Workout Mix', artist: 'Playlist • 18 songs', duration: '1:05:30', emoji: '💪' },
+                            { title: 'Study Session', artist: 'Playlist • 12 songs', duration: '45:20', emoji: '📚' },
+                            { title: 'Road Trip', artist: 'Playlist • 35 songs', duration: '2:15:45', emoji: '🚗' }
+                        ]
+                    },
+                    settings: {
+                        title: 'Settings',
+                        songs: [
+                            { title: 'Audio Quality', artist: 'High Quality • 320kbps', duration: '', emoji: '🔊' },
+                            { title: 'Download Settings', artist: 'Wi-Fi Only', duration: '', emoji: '⬇️' },
+                            { title: 'Notifications', artist: 'Enabled', duration: '', emoji: '🔔' },
+                            { title: 'Account', artist: 'Premium User', duration: '', emoji: '👤' }
+                        ]
+                    }
+                };
+                
+                navItems.forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        
+                        // Remove active class from all items
+                        navItems.forEach(nav => nav.classList.remove('active'));
+                        
+                        // Add active class to clicked item
+                        item.classList.add('active');
+                        
+                        // Update indicator position
+                        this.updateIndicator(item, indicator);
+                        
+                        // Update content
+                        const page = item.dataset.page;
+                        const data = songData[page];
+                        
+                        pageTitle.textContent = data.title;
+                        this.updateSongs(songsContainer, data.songs);
+                    });
+                });
+            }
+            
+            updateIndicator(activeItem, indicator) {
+                const rect = activeItem.getBoundingClientRect();
+                const navRect = activeItem.parentElement.getBoundingClientRect();
+                
+                indicator.style.width = rect.width + 'px';
+                indicator.style.left = (rect.left - navRect.left) + 'px';
+            }
+            
+            updateSongs(container, songs) {
+                container.innerHTML = '';
+                
+                songs.forEach((song, index) => {
+                    const songItem = document.createElement('div');
+                    songItem.className = 'song-item';
+                    songItem.style.opacity = '0';
+                    songItem.style.transform = 'translateY(20px)';
+                    
+                    songItem.innerHTML = `
+                        <div class="song-cover">${song.emoji}</div>
+                        <div class="song-info">
+                            <h3 class="song-title">${song.title}</h3>
+                            <p class="song-artist">${song.artist}</p>
+                        </div>
+                        ${song.duration ? `<span class="song-duration">${song.duration}</span>` : ''}
+                    `;
+                    
+                    container.appendChild(songItem);
+                    
+                    // Animate in with delay
+                    setTimeout(() => {
+                        songItem.style.transition = 'all 0.5s ease';
+                        songItem.style.opacity = '1';
+                        songItem.style.transform = 'translateY(0)';
+                    }, index * 100);
+                });
+            }
+
+            createStars() {
+                this.layers.forEach(layer => {
+                    for (let i = 0; i < layer.starCount; i++) {
+                        const star = document.createElement('div');
+                        star.className = `star ${layer.type}`;
+                        
+                        const x = Math.random() * window.innerWidth;
+                        const y = Math.random() * window.innerHeight;
+                        
+                        star.style.left = x + 'px';
+                        star.style.top = y + 'px';
+                        star.style.animationDelay = Math.random() * 2 + 's';
+                        
+                        star.dataset.baseX = x;
+                        star.dataset.baseY = y;
+                        
+                        layer.element.appendChild(star);
+                    }
+                });
+            }
+
+            bindEvents() {
+                document.addEventListener('mousemove', (e) => {
+                    this.mouseX = e.clientX;
+                    this.mouseY = e.clientY;
+                    this.updateParallax();
+                    this.updateMouseFollower();
+                });
+
+                window.addEventListener('resize', () => {
+                    this.handleResize();
+                });
+            }
+
+            updateParallax() {
+                const centerX = window.innerWidth / 2;
+                const centerY = window.innerHeight / 2;
+                const deltaX = (this.mouseX - centerX) / centerX;
+                const deltaY = (this.mouseY - centerY) / centerY;
+
+                this.layers.forEach(layer => {
+                    const stars = layer.element.querySelectorAll('.star');
+                    const moveX = deltaX * layer.speed * 50;
+                    const moveY = deltaY * layer.speed * 50;
+                    
+                    stars.forEach(star => {
+                        const baseX = parseFloat(star.dataset.baseX);
+                        const baseY = parseFloat(star.dataset.baseY);
+                        
+                        star.style.transform = `translate(${moveX}px, ${moveY}px)`;
+                    });
+                });
+            }
+
+            updateMouseFollower() {
+                this.mouseFollower.style.transform = `translate(${this.mouseX - 100}px, ${this.mouseY - 100}px)`;
+            }
+
+            createShootingStars() {
+                setInterval(() => {
+                    if (Math.random() < 0.3) {
+                        const shootingStar = document.createElement('div');
+                        shootingStar.className = 'shooting-star';
+                        
+                        const startX = Math.random() * window.innerWidth;
+                        const startY = Math.random() * (window.innerHeight / 2);
+                        
+                        shootingStar.style.left = startX + 'px';
+                        shootingStar.style.top = startY + 'px';
+                        
+                        document.body.appendChild(shootingStar);
+                        
+                        setTimeout(() => {
+                            shootingStar.remove();
+                        }, 3000);
+                    }
+                }, 2000);
+            }
+
+            handleResize() {
+                this.layers.forEach(layer => {
+                    layer.element.innerHTML = '';
+                });
+                this.createStars();
+            }
+        }
+
+        // Initialize the parallax effect when the page loads
+        window.addEventListener('load', () => {
+            new ParallaxStars();
+        });
+    </script>
+</body>
+</html>
