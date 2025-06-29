@@ -14,13 +14,29 @@ body {
     font-family: 'Outfit' , sans-serif;
     /* background: linear-gradient(0deg, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)) , url('https://images4.alphacoders.com/973/973967.jpg') center no-repeat; */
     /* background-size: cover; */
-    background: #000;
+    background: linear-gradient(180deg, #0a0a23 0%, #1a1a3a 50%, #2d1b69 100%);
     overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
+/* Mouse */
+.mouse__follower {
+    position: absolute;
+    width: 200px;
+    aspect-ratio: 1;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1745) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    transition: transform 0.145s ease-out;
+    top: 0;
+    left: 0;
+    z-index: 5;
+}
+/*  */
+
+/* Video */
 .video__container {
     position: fixed;
     top: 0;
@@ -54,7 +70,10 @@ body {
         z-index: 2;
     }
 }
+/*  */
 
+
+/* Home */
 .home__page {
     min-width: 100%;
     min-height: 100%;
@@ -62,9 +81,26 @@ body {
     height: auto;
 
     header {
-        padding: 4rem;
         text-align: center;
         color: #fff;
+
+        h1 {
+            position: relative;
+            padding-bottom: 20px;
+            transition: width 0.4s ease-in-out;
+
+            &::before {
+                position: absolute;
+                content: '';
+                width: 15%;
+                height: 3px;
+                border-radius: 50px;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(255, 255, 255, 1);
+            }
+        }
     }
 
 }
@@ -88,12 +124,12 @@ body {
         gap: 1.5rem;
         font-size: 14px;
         list-style: none;
-        background: rgba(255, 255, 255, 0.41);
+        background: rgba(255, 255, 255, 0.045176);
         border-radius: 50px;
         box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-        backdrop-filter: blur(8.4px);
+        backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(8.4px);
-        border: 1px solid rgba(255, 255, 255, 0.69);
+        border: 1px solid rgba(255, 255, 255, 0.89);
     }
 
     .nav__item {
@@ -102,11 +138,15 @@ body {
         align-items: center;
         height: 100%;
         cursor: pointer;
-        font-weight: 700;
+        font-weight: 400;
         transition: all 0.3s ease-in-out;
 
         &:hover {
-            transform: translateY(-4%);
+            transform: translateY(-3.45%);
+        }
+
+        &.current {
+            text-shadow: 0 0 3px #fff;
         }
     }
 
@@ -114,11 +154,66 @@ body {
         position: absolute;
         width: 120px;
         height: 2px;
-        background: #fff;
-        left: 6%;
         bottom: 0;
+        background: #fff;
         border-top-right-radius: 50px;
         border-top-left-radius: 50px;
-        transition: all 0.3s ease;
+        transition: all 0.345s ease-in-out;
     }
 } 
+
+.stars__container {
+    position: fixed;
+    width: 100%;
+    height: 100%;   
+    z-index: -1;
+
+    .star-layer {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+
+    .star {
+        position: absolute;
+        background: #fff;
+        border-radius: 50%;
+        animation: 2s shine infinite alternate;
+    }
+    .star.small {
+        width: 1px;
+        aspect-ratio: 1;
+    }
+    .star.medium {
+        width: 2px;
+        aspect-ratio: 1;
+        box-shadow: 0 0 3px rgba(255, 255, 255, 0.8);
+    }
+    .star.large {
+        width: 3px;
+        aspect-ratio: 1;
+        box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
+    }
+    .star.bright {
+        width: 4px;
+        aspect-ratio: 1;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 1);
+        animation: 3s pulse infinite;
+    }
+
+}
+
+/* Animations */
+
+@keyframes shine {
+    0% { opacity: 1; }
+    50% { opacity: 0.25; }
+    100% { opacity: 1; }
+}
+
+@keyframes pulse {
+    0% , 100% { opacity: 0.8; transform: scale(1); }
+    100% { opacity: 1; transform: scale(1.2); }
+}   
+
+/*  */
